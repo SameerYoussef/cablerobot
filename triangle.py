@@ -3,15 +3,16 @@ import turtle
 import math
 
 class Triangle():
-    def __init__(self, w, h, bl, tl, tr, br):
+    def __init__(self, w, h, bl, tl, tr, br, dr):
         self.w = w
         self.h = h
         self.bl = bl
         self.tl = tl
         self.tr = tr
         self.br = br
+        self.dr = dr
 
-    def coordinate(self, angle, length):
+    def coordinate(self, angle, length, drop):
         def calc_cos(deg):
             return math.cos(math.radians(deg))
 
@@ -20,6 +21,13 @@ class Triangle():
 
         w = self.w
         h = self.h
+        
+        dr = self.dr
+        dr.up()
+        dr.goto(-1*w/2 - 20, h/2)
+        dr.right(90)
+        dr.down()
+        dr.forward(drop)
 
         bl = self.bl
         bl.up()
@@ -36,10 +44,8 @@ class Triangle():
         tl.goto(-1*w/2, h/2)
         tl.down()
         tl_length = ((bl_length ** 2) + (h ** 2) - (2 * bl_length * h * calc_cos(bl_angle))) ** (1/2)
-        # print(f"TOP LEFT LEN: {tl_length}") # 169.72
         tl_angle_raw = math.degrees(math.asin(bl_length * calc_sin(bl_angle) / tl_length))
         tl_angle = 90 - tl_angle_raw
-        # print(f"TOP LEFT ANGLE: {tl_angle}") # 24.62
         tl.right(tl_angle)
         tl.forward(tl_length)
 
@@ -52,8 +58,6 @@ class Triangle():
         tr_angle = 180 - tr_angle_raw
         tr.right(tr_angle)
         tr.forward(tr_length)
-        # print(f"TOP RIGHT LEN: {tr_length}") # 300.44
-        # print(f"TOP RIGHT ANGLE: {tr_angle}") # 13.75
 
         br = self.br
         br.up()
@@ -64,11 +68,12 @@ class Triangle():
         br_angle = 180 - br_angle_raw
         br.left(br_angle)
         br.forward(br_length)
-        # print(f"BOTTOM RIGHT LEN: {br_length}")
-        # print(f"BOTTOM RIGHT ANGLE: {br_angle}")
+        
+        drop2 = drop ** 2
+        return (bl_length ** 2 + drop2) ** (1/2), (tl_length ** 2 + drop2) ** (1/2), (tr_length ** 2 + drop2) ** (1/2), (br_length ** 2 + drop2) ** (1/2)
     
     def clear(self):
-        for t in [self.bl, self.tl, self.tr, self.br]:
+        for t in [self.bl, self.tl, self.tr, self.br, self.dr]:
             t.clear()
             t.reset()
 
