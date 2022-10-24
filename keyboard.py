@@ -8,23 +8,24 @@ from dotenv import load_dotenv
 from divider import spread
 import threading
 import driver
+import json
 
 load_dotenv()
 
 steps = int(os.environ.get('STEPS_PER_ROTATION'))
 circumference = int(os.environ.get('SPOOL_CIRCUMFERENCE'))
 
-motor_bl = driver.Driver(list(os.environ.get('MOTOR_1_PINS')))
-motor_tl = driver.Driver(list(os.environ.get('MOTOR_2_PINS')))
-motor_tr = driver.Driver(list(os.environ.get('MOTOR_3_PINS')))
-motor_br = driver.Driver(list(os.environ.get('MOTOR_4_PINS')))
+motor_bl = driver.Driver(json.loads(os.environ.get('MOTOR_1_PINS')))
+motor_tl = driver.Driver(json.loads(os.environ.get('MOTOR_2_PINS')))
+motor_tr = driver.Driver(json.loads(os.environ.get('MOTOR_3_PINS')))
+motor_br = driver.Driver(json.loads(os.environ.get('MOTOR_4_PINS')))
 motors = [motor_bl, motor_tl, motor_tr, motor_br]
 
 # garden dimensions (mm)
 w = 435
 h = 225
 
-# Bottom-left motors initial state
+# Bottom-left motor's initial state
 angle = 45
 length = 200
 drop = 40
@@ -45,7 +46,7 @@ def read_input(text_t, coordinator):
     
     try:
         while True:
-            char = getche() #read the pressed key
+            char = getche() # read the pressed key
             coordinator.clear()
             
             if char == chr(27):
@@ -90,6 +91,7 @@ def read_input(text_t, coordinator):
     except KeyboardInterrupt:
         for motor in motors:
             motor.cleanup()
+        driver.gpio_cleanup()
         exit(1)
 
 def adjust(deltas):

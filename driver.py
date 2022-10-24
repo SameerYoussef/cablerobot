@@ -16,14 +16,17 @@ step_sequence = [[1,0,0,1],
 
 load_dotenv()
 
-class Driver():
-  
-  def __init__(self, pins) -> None:
+def gpio_cleanup():
+    GPIO.cleanup()
+
+class Driver:
+
+  def __init__(self, pins):
     self.pins = pins
     self.step_sleep = float(os.environ.get('STEP_SLEEP'))
     self.motor_step_counter = 0
-    
     GPIO.setmode(GPIO.BCM)
+    
     for pin in pins:
       GPIO.setup(pin, GPIO.OUT)
       GPIO.output(pin, GPIO.LOW)
@@ -31,10 +34,9 @@ class Driver():
   def cleanup(self):
     for pin in self.pins:
       GPIO.output(pin, GPIO.LOW)
-    GPIO.cleanup()
 
   def drive(self, steps, direction):
-    for i in range(steps):
+    for i in range(len(steps)):
       if steps[i] == True:
         for pin in range(0, len(self.pins)):
           GPIO.output( self.pins[pin], step_sequence[self.motor_step_counter][pin] )
